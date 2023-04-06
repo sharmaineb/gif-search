@@ -37,7 +37,6 @@ app.get('/', (req, res) => {
     term = ""
     if (req.query.term) {
         term = req.query.term
-    }
     // Tenor.search.Query("SEARCH KEYWORD HERE", "LIMIT HERE")
     Tenor.Search.Query(term, "10")
         .then(response => {
@@ -46,6 +45,9 @@ app.get('/', (req, res) => {
             // pass the gifs as an object into the home page
             res.render('home', { gifs })
         }).catch(console.error);
+    } else {
+        res.render('home', { gifs: [] })
+    }
 })
 
 app.get('/greetings/:name', (req, res) => {
