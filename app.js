@@ -1,5 +1,6 @@
 // Require Libraries
 const express = require('express');
+const expressSanitizer = require('express-sanitizer');
 
 require('dotenv').config()
 
@@ -13,7 +14,6 @@ const Tenor = require("tenorjs").client({
 
 // App Setup
 const app = express();
-app.use(express.static('public'));
 
 // Middleware
 // Allow Express (our web framework) to render HTML templates and send them back to the client using a new function
@@ -30,13 +30,16 @@ const hbs = handlebars.create({
 app.engine('handlebars', hbs.engine);
 app.set('view engine', 'handlebars');
 app.set('views', './views');
+app.use(express.static('public'));
+app.use(expressSanitizer());
 
 // Routes
 app.get('/', (req, res) => {
     // Handle the home page when we haven't queried yet
     term = ""
     if (req.query.term) {
-        term = req.query.term
+        // term = req.query.term
+        term = req.sanitize(req.query.term)
     // Tenor.search.Query("SEARCH KEYWORD HERE", "LIMIT HERE")
     Tenor.Search.Query(term, "10")
         .then(response => {
